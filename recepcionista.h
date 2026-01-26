@@ -17,7 +17,14 @@ struct Ficha{ // A estrutura base das informações que serão armazenadas no ca
     int id;
 };
 
-extern queue<Ficha> fila_pacientes; // Aqui ocorreu a declaração de uma fila global, para que possa ser compartilhada entre os diversos arquivos.
+struct CompararPrioridades{
+    bool operator()(const Ficha& a, const Ficha& b) const{
+        if (a.prioridade != b.prioridade) return a.prioridade < b.prioridade;
+        else return a.id > b.id;
+    }
+};
+
+extern priority_queue<Ficha,vector<Ficha>,CompararPrioridades> fila_pacientes; // Aqui ocorreu a declaração de uma fila global, para que possa ser compartilhada entre os diversos arquivos.
 
 // Logo abaixo será realizado a declaração das funções realizadas no menu rececpcionista.
 void cadastrar_paciente();

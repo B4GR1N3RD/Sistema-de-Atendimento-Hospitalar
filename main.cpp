@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 
-#include "menus.h"
+#include "gerenciamento.h"
 #include "recepcionista.h"
 
 using namespace std;
@@ -9,7 +9,7 @@ using namespace std;
 int main(){
     int option,profile;
 
-    system("clear");
+    clear();
     
     cout << "Olá, seja bem-vindo ao sistema do Hospital São Gabriel, o hospital com cuidado que protege e saúde que transforma." << endl ;
     cout << "\nPressione a tecla Enter para iniciar o sistema!" << endl; // Mensagem de Boas Vindas ao inicializar o sistema pela primeira vez. 
@@ -38,12 +38,12 @@ int main(){
 
                     switch(option){
                         case 1:
-                            system("clear");
+                             clear();
 
                             cadastrar_paciente();
                         break;
                         case 2:
-                            system("clear");
+                             clear();
 
                             int id_searcher;
 
@@ -55,7 +55,7 @@ int main(){
                             atualizar_dados(id_searcher);
                         break;
                         case 3:
-                            system("clear");
+                             clear();
 
                             visualizar_fila();
                         break;
