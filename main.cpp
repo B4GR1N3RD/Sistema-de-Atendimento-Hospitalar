@@ -10,6 +10,8 @@ int main(){
     int option,profile;
 
     clear();
+
+    carregar_fila_externa();
     
     cout << "Olá, seja bem-vindo ao sistema do Hospital São Gabriel, o hospital com cuidado que protege e saúde que transforma." << endl ;
     cout << "\nPressione a tecla Enter para iniciar o sistema!" << endl; // Mensagem de Boas Vindas ao inicializar o sistema pela primeira vez. 
@@ -21,6 +23,8 @@ int main(){
 
         if(profile == 0){
             cout << "A sessão será encerrada!" << endl;
+
+            salvar_fila_externa();
 
             break;
         }
@@ -42,20 +46,26 @@ int main(){
 
                             cadastrar_paciente();
                         break;
-                        case 2:
-                             clear();
+                        case 2:{
+                            clear();
 
-                            int id_searcher;
+                            string cpf_searcher;
 
                             cout << "A atualização de um cadastro já existente de um paciente foi inicializada." << endl;
-                            cout << "\nInsira a seguir o id da ficha que deseja atualizar." << endl;
-                            cout << "Id da ficha: ";
-                            id_searcher = leitor_inteiros();
+                            cout << "\nInsira a seguir o CPF do paciente cujo cadastro deseja atualizar." << endl;
+                            cout << "CPF do paciente: ";
+                            cpf_searcher = leitor_cpf();
 
-                            atualizar_dados(id_searcher);
+                            atualizar_dados(cpf_searcher);
                         break;
+                        }
                         case 3:
-                             clear();
+                            clear();
+
+                            adicionar_fila_atendimento();
+                        break;
+                        case 4:
+                            clear();
 
                             visualizar_fila();
                         break;
@@ -78,6 +88,11 @@ int main(){
                     
 
                     switch(option){
+                        case 1:
+                            clear();
+
+                            visualizar_fila();
+                        break;
                         default:
                             cout << "Selecione uma opção válida para o perfil selecionado." << endl;
                         break;

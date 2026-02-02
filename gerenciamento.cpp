@@ -4,6 +4,11 @@
 #include <algorithm>
 #include <cctype>
 #include <regex>
+#include <queue>
+#include <fstream>
+#include <sstream>
+#include "recepcionista.h"
+#include "medico.h"
 #include "gerenciamento.h"
 
 using namespace std;
@@ -21,6 +26,99 @@ void clear(){
     #endif
 };
 
+void salvar_fila_externa(){
+
+    ofstream arquivo("fila_pacientes.txt");
+
+    if(!arquivo.is_open()){
+        cout << "Erro ao acessar arquivo para salvar a fila de pacientes atual";
+        return;
+    }
+
+    EsperaAtendimento paciente;
+
+    while(!fila_pacientes.empty()){
+        paciente = fila_pacientes.top();
+        fila_pacientes.pop();
+
+        arquivo << paciente.info_paciente.id << "|" << paciente.info_paciente.nome << "|" << paciente.info_paciente.cpf << "|" << paciente.info_paciente.dataNascimento << "|" << paciente.info_paciente.sexo << "|" << paciente.info_paciente.telefone << "|"  << paciente.senha << "|" << paciente.prioridade << "|" << endl;
+    }
+
+    arquivo.close();
+
+    return;
+
+};
+
+void carregar_fila_externa(){
+    ifstream fila("fila_pacientes.txt");
+
+    if(!fila.is_open()){
+        cout << "Erro ao acessar arquivo para carregar a fila de pacientes atual";
+        return;
+    }
+
+    string linha;
+    EsperaAtendimento paciente;
+    while(getline(fila,linha)){   
+         stringstream leitor(linha);
+
+        string campo;
+        int index=0,copia_id;
+
+        while(getline(leitor,campo,'|')){
+            if (index == 0) paciente.info_paciente.id = stoi(campo);
+            else if(index == 1) paciente.info_paciente.nome = campo;
+            else if(index == 2) paciente.info_paciente.cpf = campo;
+            else if(index == 3) paciente.info_paciente.dataNascimento = campo;
+            else if(index == 4) paciente.info_paciente.sexo = campo;
+            else if(index == 5) paciente.info_paciente.telefone = campo;
+            else if(index == 6) paciente.senha = stoi(campo);
+            else if(index == 7) paciente.prioridade = stoi(campo);
+
+            index++;
+        }
+
+        fila_pacientes.push(paciente);
+    }
+
+    fila.close();
+
+};
+
+bool busca_por_cpf(const string& cpf_procurado){
+    ifstream cadastros("pacientes_cadastrados.txt");
+    if(!cadastros.is_open()){
+        cout << "Falha ao acessar o arquivo de pacientes cadastrados." << endl;
+        return false;
+    }
+
+    string linha;
+    while(getline(cadastros,linha)){
+        stringstream leitor(linha);
+
+        string campo,cpf_arquivo;
+        int index_leitor = 0;
+
+        while(getline(leitor,campo,'|')){
+            if(index_leitor == 2){
+                cpf_arquivo = campo;
+                break;
+            }
+            index_leitor++;
+        }
+
+        if(cpf_arquivo == cpf_procurado) return true;
+
+    }
+    cadastros.close();
+
+    return false;
+};
+
+
+
+
 int leitor_inteiros(){ // Função criada para garantir que vai ocorrer o preenchimento correto com números inteiros para que não ocorra quebras na execução do próprio sistema e preenchimento de dados de forma indevida.
     int valor;
 
@@ -35,6 +133,25 @@ int leitor_inteiros(){ // Função criada para garantir que vai ocorrer o preenc
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
     return valor;
 };
+
+int gerador_id(){
+    ifstream cadastros("pacientes_cadastrados.txt");
+    int id=1;
+
+    if(!cadastros.is_open()){
+        cout << "Falha ao acessar o arquivo de pacientes cadastrados." << endl;
+        return -1;
+    }
+
+    string linha;
+
+    while(getline(cadastros,linha)){
+        id++;
+    }
+
+    return id;
+};
+
 
 bool validador_nome(const string& nome){ // Verificador criado para assegurar que no preenchimento do nome não ocorrar violações com números ou espaço sem preenchimento.
     if (nome.empty() || nome[0] == ' ') return false;
@@ -312,8 +429,8 @@ int menu_recepcionista(){ // Após selecionar o perfil de recepcionista essas s�
     cout << "0 - Retornar;" << endl;
     cout << "1 - Cadastrar paciente;" << endl;
     cout << "2 - Atualizar dados do paciente;" << endl;
-    cout << "3 - Visualizar fila de pacientes;" << endl;
-    //cout << "4 - Agendar consulta;" << endl;
+    cout << "3 - Adicionar paciente a fila de atendimento;" << endl;
+    cout << "4 - Visualizar fila de pacientes;" << endl;
     //cout << "5 - Cancelar consulta;" << endl;
     //cout << "6 - Visualizar agenda do dia." << endl;
     option = leitor_inteiros();
