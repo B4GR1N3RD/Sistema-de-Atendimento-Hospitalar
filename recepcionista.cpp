@@ -11,20 +11,34 @@ using namespace std;
 
 priority_queue<EsperaAtendimento,vector<EsperaAtendimento>,CompararPrioridades> fila_pacientes;
 
-int senha_atualizada(){
-    int senha_atual=1;
+int captador_senha(){
+    ifstream fila("fila_pacientes.txt");
 
-    priority_queue<EsperaAtendimento,vector<EsperaAtendimento>,CompararPrioridades> fila_contagem = fila_pacientes;
+    string linha,ultima;
+    int maior_senha = 0;
+    EsperaAtendimento paciente;
+    while(getline(fila,linha)){  
+        stringstream leitor(linha);
 
-    while(!fila_contagem.empty()){
-        senha_atual ++;
-        fila_contagem.pop();
+        string campo;
+        int campo_index=0,senha_lida;
+
+        while(getline(leitor,campo,'|')){
+            if(campo_index == 6 && isdigit(campo[0])){
+                senha_lida = stoi(campo);
+                if(senha_lida > maior_senha) maior_senha = senha_lida;
+
+                break;
+            } 
+            campo_index++;
+        }
     }
+    fila.close();
 
-    return senha_atual;
+    return maior_senha;
 };
 
-int senha=senha_atualizada();
+int senha_processamento = (captador_senha() + 1);
 
 void cadastrar_paciente(){
     ofstream cadastros("pacientes_cadastrados.txt",ios::app);
@@ -47,8 +61,24 @@ void cadastrar_paciente(){
     cout << "CPF: " ;
     paciente.cpf = leitor_cpf();
     if(busca_por_cpf(paciente.cpf)){
+        clear();
         cout << "O paciente que está sendo cadastrado já possui registro em nosso sistema!" << endl;
+        cout << "Se deseja realizar a inserção do paciente que já possui cadastro na fila de atendimento basta digiar [1], senão digite [0] para retornar ao menu." << endl;
 
+        int escolha;
+
+        while(true){
+            escolha = leitor_inteiros();
+
+            if(escolha == 0) break;
+            else if(escolha == 1){
+                adicionar_fila_atendimento();
+                break;
+            }
+            else{
+                cout << "Insira um valor válido para a ação realizada!" << endl;
+            }
+        }
 
 
         return;
@@ -208,7 +238,7 @@ void adicionar_fila_atendimento(){
         cout << "\nQual o grau de gravidade do incidente: ";
         paciente.prioridade = leitor_prioridade();
 
-        paciente.senha = senha_atualizada();
+        paciente.senha = senha_processamento++;
 
         fila_pacientes.push(paciente);
 
@@ -237,7 +267,7 @@ void visualizar_fila(){
         paciente = fila_auxiliar.top();
         fila_auxiliar.pop();
 
-        cout << "Nome completo: " << paciente.info_paciente.nome << endl;
+        cout << "Nome completo: " << paciente.info_paciente.nome << " | " << paciente.info_paciente.id << endl;
 
         cout << "Grau de prioridade: " << paciente.prioridade << endl;
 

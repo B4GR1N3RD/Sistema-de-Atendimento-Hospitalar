@@ -26,6 +26,13 @@ void clear(){
     #endif
 };
 
+bool verificar_arquivo_vazio(ifstream& tipo_arquivo){
+    string linha;
+    if((tipo_arquivo.peek() == ifstream::traits_type::eof()) || (tipo_arquivo.peek() == '\n')) return true;
+
+    return false;
+};
+
 void salvar_fila_externa(){
 
     ofstream arquivo("fila_pacientes.txt");
@@ -47,7 +54,6 @@ void salvar_fila_externa(){
     arquivo.close();
 
     return;
-
 };
 
 void carregar_fila_externa(){
@@ -58,8 +64,11 @@ void carregar_fila_externa(){
         return;
     }
 
-    string linha;
+    string linha,ultima;
     EsperaAtendimento paciente;
+
+    if(verificar_arquivo_vazio(fila)) return;
+
     while(getline(fila,linha)){   
          stringstream leitor(linha);
 
@@ -84,6 +93,7 @@ void carregar_fila_externa(){
 
     fila.close();
 
+    return;
 };
 
 bool busca_por_cpf(const string& cpf_procurado){
@@ -153,11 +163,11 @@ int gerador_id(){
 };
 
 
-bool validador_nome(const string& nome){ // Verificador criado para assegurar que no preenchimento do nome não ocorrar violações com números ou espaço sem preenchimento.
-    if (nome.empty() || nome[0] == ' ') return false;
+bool validador_strings(const string& string){ // Verificador criado para assegurar que no preenchimento do nome não ocorrar violações com números ou espaço sem preenchimento.
+    if (string.empty() || string[0] == ' ') return false;
 
-    for(int i=0;i<nome.size();i++){
-        if(isdigit(nome[i])) return false;
+    for(int i=0;i<string.size();i++){
+        if(isdigit(string[i])) return false;
     }
 
     return true;
@@ -170,7 +180,7 @@ string leitor_nome(){ // leitor que chama a função verificadora e emite a mens
     do{
         getline(cin,nome);
 
-        valido = validador_nome(nome);
+        valido = validador_strings(nome);
 
         if(valido) break;
         else{

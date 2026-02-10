@@ -9,11 +9,15 @@ void salvar_fila_externa();
 
 void carregar_fila_externa();
 
+bool verificar_arquivo_vazio(std::ifstream& tipo_arquivo);
+
 void pause();
 
 void clear();
 
 bool busca_por_cpf(const std::string& cpf_procurado);
+
+bool validador_strings(const std::string& string);
 
 int leitor_inteiros();
 

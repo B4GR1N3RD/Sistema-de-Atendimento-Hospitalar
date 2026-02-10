@@ -3,6 +3,7 @@
 
 #include "gerenciamento.h"
 #include "recepcionista.h"
+#include "medico.h"
 
 using namespace std;
 
@@ -10,7 +11,7 @@ int main(){
     int option,profile;
 
     clear();
-
+    
     carregar_fila_externa();
     
     cout << "Olá, seja bem-vindo ao sistema do Hospital São Gabriel, o hospital com cuidado que protege e saúde que transforma." << endl ;
@@ -93,6 +94,11 @@ int main(){
 
                             visualizar_fila();
                         break;
+                        case 2:{
+                            clear();
+
+                            iniciar_atendimento();
+                        }
                         default:
                             cout << "Selecione uma opção válida para o perfil selecionado." << endl;
                         break;
